@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://bbqbf01bodlxl"]
+
+[ext_resource type="Script" uid="uid://cgctv5qflekq3" path="res://spike_ball.gd" id="1_sk5bj"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_g4v7s"]
+radius = 31.016125
+
+[node name="SpikeBall" type="Area2D" unique_id=201979952 groups=["obstacles"]]
+collision_layer = 4
+collision_mask = 0
+script = ExtResource("1_sk5bj")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1657598729]
+shape = SubResource("CircleShape2D_g4v7s")
+debug_color = Color(0.5882353, 0.3647059, 0.3647059, 0.41960785)
+
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="." unique_id=1951279013]
+rect = Rect2(-31, -31, 62, 62)
+
+[connection signal="screen_exited" from="VisibleOnScreenNotifier2D" to="." method="_on_visible_on_screen_notifier_2d_screen_exited"]
