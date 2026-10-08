@@ -1,21 +1,7 @@
 [gd_scene format=3 uid="uid://b5s0ef5clsmsw"]
 
 [ext_resource type="Script" uid="uid://kl7amh0bqqg8" path="res://obstacle.gd" id="1_sl1jc"]
-[ext_resource type="Shader" uid="uid://d2o2tx08morry" path="res://obstacle.gdshader" id="2_aubd6"]
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_g4v7s"]
-size = Vector2(154, 500)
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_g4v7s"]
-shader = ExtResource("2_aubd6")
-
-[sub_resource type="SegmentShape2D" id="SegmentShape2D_yf5fn"]
-a = Vector2(77, -250)
-b = Vector2(-77, -250)
-
-[sub_resource type="SegmentShape2D" id="SegmentShape2D_aubd6"]
-a = Vector2(77, 250)
-b = Vector2(-77, 250)
+[ext_resource type="PackedScene" uid="uid://c2tm5hhn6won7" path="res://pillar.tscn" id="2_aubd6"]
 
 [sub_resource type="SegmentShape2D" id="SegmentShape2D_g4v7s"]
 a = Vector2(0, -500)
@@ -24,70 +10,26 @@ b = Vector2(0, 500)
 [node name="Obstacle" type="Node2D" unique_id=1891702646 groups=["obstacles"]]
 script = ExtResource("1_sl1jc")
 
-[node name="BottomHalf" type="Area2D" parent="." unique_id=2011117034 groups=["obstacles"]]
-position = Vector2(0, 250)
-collision_layer = 4
-collision_mask = 0
+[node name="TopPivot" type="Node2D" parent="." unique_id=1488093516]
+metadata/_edit_group_ = true
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="BottomHalf" unique_id=1812522438]
-shape = SubResource("RectangleShape2D_g4v7s")
-debug_color = Color(0.5882353, 0.3647059, 0.3647059, 0.41960785)
+[node name="TopPillar" parent="TopPivot" unique_id=1542245351 instance=ExtResource("2_aubd6")]
+position = Vector2(75, -250)
 
-[node name="ColorRect" type="ColorRect" parent="BottomHalf" unique_id=325512839]
-material = SubResource("ShaderMaterial_g4v7s")
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -77.0
-offset_top = -250.0
-offset_right = 77.0
-offset_bottom = 250.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="BottomPivot" type="Node2D" parent="." unique_id=1892326209]
 
-[node name="Floor" type="StaticBody2D" parent="BottomHalf" unique_id=1467832947]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="BottomHalf/Floor" unique_id=1266989906]
-shape = SubResource("SegmentShape2D_yf5fn")
-
-[node name="TopHalf" type="Area2D" parent="." unique_id=1617738783 groups=["obstacles"]]
-position = Vector2(0, -250)
-collision_layer = 4
-collision_mask = 0
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="TopHalf" unique_id=304816464]
-shape = SubResource("RectangleShape2D_g4v7s")
-debug_color = Color(0.59, 0.3658, 0.3658, 0.41960785)
-
-[node name="ColorRect" type="ColorRect" parent="TopHalf" unique_id=1433033423]
-material = SubResource("ShaderMaterial_g4v7s")
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -77.0
-offset_top = -250.0
-offset_right = 77.0
-offset_bottom = 250.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Floor" type="StaticBody2D" parent="TopHalf" unique_id=920621619]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="TopHalf/Floor" unique_id=1043744771]
-shape = SubResource("SegmentShape2D_aubd6")
+[node name="BottomPillar" parent="BottomPivot" unique_id=653009502 instance=ExtResource("2_aubd6")]
+position = Vector2(75, 250)
 
 [node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="." unique_id=2009770160]
-position = Vector2(-135, 0)
-rect = Rect2(58, -172, 154, 344)
+position = Vector2(-58, 0)
+rect = Rect2(58, -172, 150, 344)
 
 [node name="ScoreLine" type="Area2D" parent="." unique_id=1807139833 groups=["score lines"]]
-position = Vector2(72, 0)
+position = Vector2(150, 0)
 collision_layer = 8
 collision_mask = 0
+metadata/_edit_group_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ScoreLine" unique_id=1332246334]
 shape = SubResource("SegmentShape2D_g4v7s")

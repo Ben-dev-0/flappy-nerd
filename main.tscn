@@ -5,13 +5,15 @@
 [ext_resource type="PackedScene" uid="uid://b5s0ef5clsmsw" path="res://obstacle.tscn" id="2_0xm2m"]
 [ext_resource type="PackedScene" uid="uid://bbqbf01bodlxl" path="res://spike_ball.tscn" id="3_lquwl"]
 [ext_resource type="PackedScene" uid="uid://baix7m88r5lcc" path="res://hud.tscn" id="4_1bvp3"]
+[ext_resource type="Texture2D" uid="uid://ccnfdphsgnv82" path="res://circle1.png" id="5_272bh"]
+[ext_resource type="Texture2D" uid="uid://cxivo8jbpymbm" path="res://circle2.png" id="6_5vw27"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_g4v7s"]
 size = Vector2(851.5, 27.5)
 
 [sub_resource type="Curve2D" id="Curve2D_0xm2m"]
 _data = {
-"points": PackedVector2Array(0, 0, 0, 0, 1152, 0, 0, 0, 0, 0, 1152, 648)
+"points": PackedVector2Array(0, 0, 0, 0, 1152, 648, 0, 0, 0, 0, 1152, 0)
 }
 point_count = 2
 
@@ -37,18 +39,25 @@ shape = SubResource("RectangleShape2D_g4v7s")
 
 [node name="ObstacleSpawner" type="Path2D" parent="." unique_id=225211778]
 curve = SubResource("Curve2D_0xm2m")
-metadata/_edit_group_ = true
 
-[node name="ObstacleSpawnPoint" type="PathFollow2D" parent="ObstacleSpawner" unique_id=1869931064]
-position = Vector2(1152, 0)
-rotation = 1.5707964
+[node name="TopObstacleSpawnPoint" type="PathFollow2D" parent="ObstacleSpawner" unique_id=1869931064]
+position = Vector2(1152, 648)
+rotation = -1.5707964
+
+[node name="Sprite2D" type="Sprite2D" parent="ObstacleSpawner/TopObstacleSpawnPoint" unique_id=470270366]
+scale = Vector2(0.11308377, 0.113083765)
+texture = ExtResource("5_272bh")
+
+[node name="BottomObstacleSpawnPoint" type="PathFollow2D" parent="ObstacleSpawner" unique_id=53369488]
+position = Vector2(1152, 648)
+rotation = -1.5707964
+
+[node name="Sprite2D" type="Sprite2D" parent="ObstacleSpawner/BottomObstacleSpawnPoint" unique_id=1816883815]
+scale = Vector2(0.11308382, 0.113083795)
+texture = ExtResource("6_5vw27")
 
 [node name="ObstacleSpawnTimer" type="Timer" parent="." unique_id=26913692]
-wait_time = 2.0
-autostart = true
-
-[node name="SpikeBallSpawnTimer" type="Timer" parent="." unique_id=1187662458]
-wait_time = 1.237
+wait_time = 0.75
 autostart = true
 
 [node name="PlayerSpawnPoint" type="Node2D" parent="." unique_id=95678017]
@@ -57,4 +66,3 @@ position = Vector2(135, 460)
 [node name="HUD" parent="." unique_id=73680359 instance=ExtResource("4_1bvp3")]
 
 [connection signal="timeout" from="ObstacleSpawnTimer" to="." method="_on_obstacle_spawn_timer_timeout"]
-[connection signal="timeout" from="SpikeBallSpawnTimer" to="." method="_on_spike_ball_spawn_timer_timeout"]

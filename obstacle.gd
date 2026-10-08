@@ -8,9 +8,15 @@ func _physics_process(delta: float) -> void:
 	position.x -= speed * delta
 
 ## open the obstacle according to the size of the gap
-func open(gap_height: float) -> void:
-	$BottomHalf.position.y += gap_height/2
-	$TopHalf.position.y -= gap_height/2
+func open(bottom_position:Vector2, top_position: Vector2) -> void:
+	$BottomPivot.position = bottom_position - position
+	$TopPivot.position = top_position - position
 
 func _on_visible_on_screen_notifier_2d_screen_exited() -> void:
 	queue_free()
+
+func change_top_color(c: Color):
+	$TopPivot/TopPillar.change_color(c)
+
+func change_bottom_color(c: Color):
+	$BottomPivot/BottomPillar.change_color(c)

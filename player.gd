@@ -5,6 +5,7 @@ signal scored
 
 @export var gravity = 1000
 @export var jump_impulse = 400
+@export var god_mode = false
 
 func _physics_process(delta: float) -> void:
 	if not is_on_floor():
@@ -16,7 +17,7 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 
 func _on_hurtbox_area_entered(area: Area2D) -> void:
-	if area.is_in_group("obstacles"):
+	if not god_mode and area.is_in_group("obstacles"):
 		hit.emit()
 		call_deferred("queue_free")
 	if area.is_in_group("score lines"):
