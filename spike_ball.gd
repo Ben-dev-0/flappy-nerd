@@ -10,3 +10,6 @@ func _on_visible_on_screen_notifier_2d_screen_exited() -> void:
 
 func change_color(col: Color):
 	$CollisionShape2D.debug_color = col
+
+func set_size(scale_multiplier: float):
+	scale = Vector2(scale_multiplier, scale_multiplier)

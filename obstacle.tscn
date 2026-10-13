@@ -16,10 +16,16 @@ metadata/_edit_group_ = true
 [node name="TopPillar" parent="TopPivot" unique_id=1542245351 instance=ExtResource("2_aubd6")]
 position = Vector2(75, -250)
 
+[node name="TopSpikeBallSpawner" type="Node2D" parent="TopPivot" unique_id=1940943855]
+position = Vector2(75, 0)
+
 [node name="BottomPivot" type="Node2D" parent="." unique_id=1892326209]
 
 [node name="BottomPillar" parent="BottomPivot" unique_id=653009502 instance=ExtResource("2_aubd6")]
 position = Vector2(75, 250)
+
+[node name="BottomSpikeBallSpawner" type="Node2D" parent="BottomPivot" unique_id=843788853]
+position = Vector2(75, 0)
 
 [node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="." unique_id=2009770160]
 position = Vector2(-58, 0)

@@ -4,9 +4,11 @@ extends Node
 @export var spike_ball_scene: PackedScene
 @export var player_scene: PackedScene
 @export var min_obstacle_distance = 0.15
+@export var min_room_for_spike_ball = 0.2
 @export var spike_ball_min_speed = 100
 @export var spike_ball_max_speed = 400
 @export var obstacle_height_increments = 20
+@export var empty_column_chance = 0.5
 
 @onready var top_obstacle_spawn_point = $ObstacleSpawner/TopObstacleSpawnPoint
 @onready var bottom_obstacle_spawn_point = $ObstacleSpawner/BottomObstacleSpawnPoint
@@ -27,54 +29,58 @@ func _on_obstacle_spawn_timer_timeout() -> void:
 	obstacle.change_top_color(Color(1.0, 0.66, 0.666, 0.133))
 	obstacle.change_bottom_color(Color(0.12, 1.0, 0.956, 0.133))
 	
-	top_obstacle_spawn_point.progress_ratio = randi_range(obstacle_height_increments/2, obstacle_height_increments) * (1.0/obstacle_height_increments)
-	bottom_obstacle_spawn_point.progress_ratio = randi_range(0, obstacle_height_increments/2) * (1.0/obstacle_height_increments)
-	
-	print(str(top_obstacle_spawn_point.progress_ratio) + "<-->" + str(bottom_obstacle_spawn_point.progress_ratio))
+	if randf() < empty_column_chance:
+		top_obstacle_spawn_point.progress_ratio = 1.0
+		bottom_obstacle_spawn_point.progress_ratio = 0.0
+	else:
+		@warning_ignore("integer_division")
+		top_obstacle_spawn_point.progress_ratio = randi_range(obstacle_height_increments/2, obstacle_height_increments) * (1.0/obstacle_height_increments)
+		@warning_ignore("integer_division")
+		bottom_obstacle_spawn_point.progress_ratio = randi_range(0, obstacle_height_increments/2) * (1.0/obstacle_height_increments)
+		
+	var gap_height = top_obstacle_spawn_point.progress_ratio - bottom_obstacle_spawn_point.progress_ratio
 	
 	#ensure minimum opening height
-	if top_obstacle_spawn_point.progress_ratio - bottom_obstacle_spawn_point.progress_ratio < min_obstacle_distance:
-		var difference = top_obstacle_spawn_point.progress_ratio - bottom_obstacle_spawn_point.progress_ratio
-		difference = min_obstacle_distance - difference
-		bottom_obstacle_spawn_point.progress_ratio -= difference/2
-		top_obstacle_spawn_point.progress_ratio += difference/2
+	if gap_height < min_obstacle_distance:
+		gap_height = min_obstacle_distance - gap_height
+		bottom_obstacle_spawn_point.progress_ratio -= gap_height/2
+		top_obstacle_spawn_point.progress_ratio += gap_height/2
+		gap_height = min_obstacle_distance
 		
 		obstacle.change_top_color(Color(1.0, 0.0, 0.017, 0.604))
 		obstacle.change_bottom_color(Color(1.0, 0.0, 0.017, 0.604))
 	
-	# Bt > At and Bb > Ab
-	if top_obstacle_spawn_point.progress_ratio > last_upper_progress_ratio and bottom_obstacle_spawn_point.progress_ratio > last_lower_progress_ratio:
+	# Floor and ceiling of the current obstacle are both higher than the last
+	if top_obstacle_spawn_point.progress_ratio >= last_upper_progress_ratio and bottom_obstacle_spawn_point.progress_ratio >= last_lower_progress_ratio:
 		if last_upper_progress_ratio - bottom_obstacle_spawn_point.progress_ratio < min_obstacle_distance:
 			bottom_obstacle_spawn_point.progress_ratio = last_lower_progress_ratio
+		if last_upper_progress_ratio - bottom_obstacle_spawn_point.progress_ratio >= min_room_for_spike_ball:
+			obstacle.place_top_spike_ball(spike_ball_scene)
 			
 			obstacle.change_bottom_color(Color(0.12, 1.0, 0.956, 0.718))
-	# Bt < At and Bb < Ab
-	elif top_obstacle_spawn_point.progress_ratio < last_upper_progress_ratio and bottom_obstacle_spawn_point.progress_ratio < last_lower_progress_ratio:
+	# Floor and ceiling of the current obstacle are both lower than the last
+	elif top_obstacle_spawn_point.progress_ratio <= last_upper_progress_ratio and bottom_obstacle_spawn_point.progress_ratio <= last_lower_progress_ratio:
 		if top_obstacle_spawn_point.progress_ratio - last_lower_progress_ratio < min_obstacle_distance:
 			top_obstacle_spawn_point.progress_ratio = last_upper_progress_ratio
+		if top_obstacle_spawn_point.progress_ratio - last_lower_progress_ratio >= min_room_for_spike_ball:
+			obstacle.place_bottom_spike_ball(spike_ball_scene)
 			
 			obstacle.change_top_color(Color(1.0, 0.66, 0.666, 0.718))
+	# Current floor is lower than the last and current ceiling is higher than the last
+	elif top_obstacle_spawn_point.progress_ratio > last_upper_progress_ratio and bottom_obstacle_spawn_point.progress_ratio < last_lower_progress_ratio:
+		obstacle.place_top_spike_ball(spike_ball_scene)
+		obstacle.place_bottom_spike_ball(spike_ball_scene)
+	
+	# add spike balls
+	#if (gap_height >= min_room_for_spike_ball):
+		#obstacle.place_top_spike_ball(spike_ball_scene)
+		#obstacle.place_bottom_spike_ball(spike_ball_scene)
 	
 	last_lower_progress_ratio = bottom_obstacle_spawn_point.progress_ratio
 	last_upper_progress_ratio = top_obstacle_spawn_point.progress_ratio
 	
 	obstacle.open(bottom_obstacle_spawn_point.position, top_obstacle_spawn_point.position)
 	add_child(obstacle)
-
-#func generate_obstacle_sequence(origin:Vector2, length:int, min_gap:float, max_gap:float,
-#max_shift:float) -> void:
-	#var current_position = origin
-	#for i in range(length):
-		#var obstacle = obstacle_scene.instantiate()
-		#obstacle.position = current_position
-		#var gap_height = randf_range(min_gap, max_gap)
-		#obstacle.open(gap_height)
-		#add_child(obstacle)
-		#print(obstacle.get_width())
-		#current_position.y = randf_range(current_position.y - max_shift, current_position.y + max_shift)
-		#current_position.x = current_position.x + obstacle.get_width()
-	
-	#$ObstacleSpawnTimer.start()
 
 func _on_player_hit():
 	for n in get_tree().get_nodes_in_group("obstacles"):

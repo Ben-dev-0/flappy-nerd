@@ -20,3 +20,11 @@ func change_top_color(c: Color):
 
 func change_bottom_color(c: Color):
 	$BottomPivot/BottomPillar.change_color(c)
+
+func place_top_spike_ball(spike_ball_scene: PackedScene):
+	var spike_ball = spike_ball_scene.instantiate()
+	$TopPivot/TopSpikeBallSpawner.add_child(spike_ball)
+
+func place_bottom_spike_ball(spike_ball_scene: PackedScene):
+	var spike_ball = spike_ball_scene.instantiate()
+	$BottomPivot/BottomSpikeBallSpawner.add_child(spike_ball)
